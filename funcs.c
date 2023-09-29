@@ -3,35 +3,6 @@
 #include <string.h>
 #include <math.h>
 #include "funcs.h"
-/*
-typedef struct Pair {
-  int k;
-  int v;
-} Pair;
-
-typedef struct Node Node;
-
-struct Node {
-  Pair this;
-  Node *Parent;
-  Node *left;
-  Node *right;
-};
-
-int mode(int *y, int n) {
-  // keep the numbers in a binary search tree that has key = number, and value = # of occurrences
-  Node *root = NULL;
-  for (int i = 0; i < n; i++) {
-    
-  }
-
-
-  return 0;
-}
-
-
-// TODO: define insert into BST, search BST, find max BST
-*/
 
 float *f_merge(float *arr_1, int n1, float *arr_2, int n2) {
   // we assume arr_1 and arr_2 are already sorted
