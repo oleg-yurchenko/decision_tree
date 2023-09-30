@@ -7,3 +7,4 @@ typedef struct DecisionStump {
 } Stump;
 Stump *trainDecisionStump(float **X, int *y, int n, int d);
 int *predictDecisionStump(Stump *stump, float **X, int n, int d);
+void printDecisionStump(Stump *stump);

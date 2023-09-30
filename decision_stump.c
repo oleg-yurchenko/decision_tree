@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <limits.h>
 #include "funcs.h"
 #include "decision_stump.h"
 
@@ -27,8 +28,8 @@ Stump *trainDecisionStump(float **X, int *y, int n, int d) {
   // initialize the values of stump
   stump->yes_mode = bin_mode(y, n);
   stump->no_mode = bin_mode(y, n);
-  stump->best_feature = 0;
-  stump->best_threshold = 0;
+  stump->best_feature = -1;
+  stump->best_threshold = -1;
   stump->best_info_gain = 0;
 
   // Go over every single feature
@@ -71,16 +72,18 @@ Stump *trainDecisionStump(float **X, int *y, int n, int d) {
   return stump;
 }
 
+// NOTE: the out array does NOT predict the mode anymore, it only predicts 1 if it should be greater, and 0 if lesser
+// The DECISION TREE is responsible for using the stump's yes_mode and no_mode parameters to classify it once it reaches its end
 int *predictDecisionStump(Stump *stump, float **X, int n, int d) {
   int *out = malloc(sizeof(int) * n);
   float *X_t = f_getColumn(X, stump->best_feature, n);
-  for (int i = 0; i < n; i++) {
-    if(X_t[i] > stump->best_threshold)
-      out[i] = stump->yes_mode;
-    else
-      out[i] = stump->no_mode;
-  }
+  for (int i = 0; i < n; i++)
+    out[i] = (X_t[i] > stump->best_threshold) ? 1 : 0;
   free(X_t);
   return out;
+}
+
+void printDecisionStump(Stump *stump) {
+  printf("---STUMP INFO---\nyes_mode: %d\nno_mode: %d\nbest_feature: %d\nbest_threshold: %f\nbest_info_gain: %f\n----------------\n", stump->yes_mode    , stump->no_mode, stump->best_feature, stump->best_threshold, stump->best_info_gain);
 }
 
