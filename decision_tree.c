@@ -113,7 +113,7 @@ void printDecisionTree(Tree *tree) {
     return;
   }
   printf("---Tree begin---\n");
-  printf("Tree level: %d\nStump info:\n", tree->remaining_depth);
+  printf("Tree level: %d\nStump info:\n", INT_MAX - tree->remaining_depth);
   printDecisionStump(tree->stump);
   printf("CHILDREN:\n");
   printDecisionTree(tree->greaterChild);
