@@ -40,7 +40,7 @@ int main() {
       n_correct++;
   float accuracy = ((float)n_correct) / ((float)N_ROWS);
 
-  printf("ACCURACY: %f\n", accuracy);
+  printf("TRAINING ACCURACY: %f\n", accuracy);
 
   // Testing on Blinding Lights. Result should be false (danceability = 50 < 75) (has NA value for feature 10, so I set NA=0 for this specifically)
   // In the original dataset (X) all the rows with NA values present were cut, and only the columns with numeric values were kept (no artist's name, song name, etc.)
