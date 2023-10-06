@@ -73,10 +73,7 @@ int main() {
   free(y_test_pred);
   free(y_pred);
 
-  freeDecisionTree(tree->tree);
-  free(tree->X_sample);
-  free(tree->y_sample);
-  free(tree);
+  freeRandomTree(tree);
 
   for (int i = 0; i < N_ROWS; i++)
     free(X[i]);

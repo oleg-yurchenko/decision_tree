@@ -85,9 +85,7 @@ RTree *trainRandomTree(float **X, int *y, int n, int d, int max_depth, float min
   //  r_tree->X_sample[i] = malloc(sizeof(float) * d);
   r_tree->y_sample = malloc(sizeof(int) * n);
   // Sample random indices
-  int *sample_indices = malloc(sizeof(int) * n);
   //for (int i = 0; i < n; i++)
-  //  sample_indices[i] = (n - 1) * ((double)rand() / RAND_MAX);
   for (int i = 0; i < n; i++) {
     int sample_idx = (n - 1) * ((double)rand() / RAND_MAX);
     r_tree->X_sample[i] = X[sample_idx];
@@ -129,6 +127,16 @@ void freeDecisionTree(Tree *tree) {
   free(tree->stump);
   freeDecisionTree(tree->greaterChild);
   freeDecisionTree(tree->lesserChild);
+  free(tree);
+}
+
+void freeRandomTree(RTree *tree) {
+  if (tree == NULL)
+    return;
+  freeDecisionTree(tree->tree);
+  // the reason we don't free each pointer in X_sample is because they are references to existing data, that should be freed by whoever allocated it initially
+  free(tree->X_sample);
+  free(tree->y_sample);
   free(tree);
 }
 
