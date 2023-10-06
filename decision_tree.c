@@ -14,7 +14,8 @@ typedef struct DecisionTree {
 } Tree;
 */
 
-Tree *trainDecisionTree(float **X, int *y, int n, int d, int max_depth, float min_infogain) {
+// This is the standard call, so it uses the parameter defined implementations for "trainDecisionStump" and "predictDecisionStump" functions.
+Tree *trainDecisionTree(float **X, int *y, int n, int d, int max_depth, float min_infogain, Stump *(*trainDecisionStump)(float **X, int *y, int n, int d), int *(*predictDecisionStump)(Stump *stump, float **X, int n, int d)) {
   if (max_depth == 0)
     return NULL;
   if (max_depth < 0)
@@ -62,8 +63,8 @@ Tree *trainDecisionTree(float **X, int *y, int n, int d, int max_depth, float mi
   }
   free(y_pred);
 
-  out->greaterChild = trainDecisionTree(X_greater, y_greater, n_greater, d, out->remaining_depth, min_infogain);
-  out->lesserChild = trainDecisionTree(X_lesser, y_lesser, n_lesser, d, out->remaining_depth, min_infogain);
+  out->greaterChild = trainDecisionTree(X_greater, y_greater, n_greater, d, out->remaining_depth, min_infogain, trainDecisionStump, predictDecisionStump);
+  out->lesserChild = trainDecisionTree(X_lesser, y_lesser, n_lesser, d, out->remaining_depth, min_infogain, trainDecisionStump, predictDecisionStump);
 
   free(X_greater);
   free(y_greater);
@@ -71,6 +72,30 @@ Tree *trainDecisionTree(float **X, int *y, int n, int d, int max_depth, float mi
   free(y_lesser);
 
   return out;
+}
+
+Tree *trainDefaultTree(float **X, int *y, int n, int d, int max_depth, float min_infogain) {
+  return trainDecisionTree(X, y, n, d, max_depth, min_infogain, trainDecisionStump, predictDecisionStump);
+}
+
+RTree *trainRandomTree(float **X, int *y, int n, int d, int max_depth, float min_infogain) {
+  RTree *r_tree = malloc(sizeof(RTree));
+  r_tree->X_sample = malloc(sizeof(float *) * n);
+  //for (int i = 0; i < n; i++)
+  //  r_tree->X_sample[i] = malloc(sizeof(float) * d);
+  r_tree->y_sample = malloc(sizeof(int) * n);
+  // Sample random indices
+  int *sample_indices = malloc(sizeof(int) * n);
+  //for (int i = 0; i < n; i++)
+  //  sample_indices[i] = (n - 1) * ((double)rand() / RAND_MAX);
+  for (int i = 0; i < n; i++) {
+    int sample_idx = (n - 1) * ((double)rand() / RAND_MAX);
+    r_tree->X_sample[i] = X[sample_idx];
+    r_tree->y_sample[i] = y[sample_idx];
+  }
+
+  r_tree->tree = trainDecisionTree(r_tree->X_sample, r_tree->y_sample, n, d, max_depth, min_infogain, trainDecisionStump, predictDecisionStump);
+  return r_tree;
 }
 
 int *predictDecisionTree(Tree *tree, float **X, int n) {

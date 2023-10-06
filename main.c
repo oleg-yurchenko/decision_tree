@@ -26,13 +26,13 @@ int main() {
 
   printf("starting training...\n");
   // This tree will severely overfit the data, especially since we don't have an actual validation set, and it has infinite depth
-  Tree *tree = trainDecisionTree(X, y, N_ROWS, N_COLS, -1, -1);
+  RTree *tree = trainRandomTree(X, y, N_ROWS, N_COLS, -1, -1);
   printf("finished training...\n");
 
   // DO SOMETHING WITH TREE
-  printDecisionTree(tree);
+  printDecisionTree(tree->tree);
 
-  int *y_pred = predictDecisionTree(tree, X, N_ROWS);
+  int *y_pred = predictDecisionTree(tree->tree, X, N_ROWS);
 
   int n_correct = 0;
   for (int i = 0; i < N_ROWS; i++)
@@ -66,14 +66,17 @@ int main() {
   X_test[0][17] = 9.0f;
   X_test[0][18] = 7.0f;
 
-  int *y_test_pred = predictDecisionTree(tree, X_test, 1);
+  int *y_test_pred = predictDecisionTree(tree->tree, X_test, 1);
   printf("prediction of Blinding Lights: %d\nCorrect answer is: 0\n", y_pred[0]);
   free(X_test[0]);
   free(X_test);
   free(y_test_pred);
   free(y_pred);
 
-  freeDecisionTree(tree);
+  freeDecisionTree(tree->tree);
+  free(tree->X_sample);
+  free(tree->y_sample);
+  free(tree);
 
   for (int i = 0; i < N_ROWS; i++)
     free(X[i]);
