@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "decision_tree.h"
+#include <time.h>
 
 #define DATA_PATH "./data/danceability_data.csv"
 #define N_COLS 19
 #define N_ROWS 829
 
 int main() {
+  srand(time(NULL));
   FILE *data_file = fopen(DATA_PATH, "r");
   if (!data_file)
     return -1;

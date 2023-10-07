@@ -5,6 +5,9 @@ typedef struct DecisionStump {
   float best_threshold; // The threshold where to split (on the feature)
   float best_info_gain; // The infogain of splitting on the feature at the threshold
 } Stump;
-Stump *trainDecisionStump(float **X, int *y, int n, int d);
+
+Stump *trainDecisionStump(float **X, int *y, int n, int d, int *feat_indices);
+Stump *trainDefaultStump(float **X, int *y, int n, int d);
+Stump *trainRandomStump(float **X, int *y, int n, int d);
 int *predictDecisionStump(Stump *stump, float **X, int n, int d);
 void printDecisionStump(Stump *stump);

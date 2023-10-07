@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
+#include <sys/_types/_null.h>
 #include "funcs.h"
 #include "decision_stump.h"
 
@@ -22,7 +23,7 @@ typedef struct DecisionStump {
  * Returns a pointer to a decision stump with the parameters defined in the struct above (yes_mode and no_mode are the output for when the predictors are 1 and 0, respectively)
  * This function allocates the space for the stump, and expects the receiving process to free it
  */
-Stump *trainDecisionStump(float **X, int *y, int n, int d) {
+Stump *trainDecisionStump(float **X, int *y, int n, int d, int *feat_indices) {
   Stump *stump = malloc(sizeof(Stump));
 
   // initialize the values of stump
@@ -35,7 +36,7 @@ Stump *trainDecisionStump(float **X, int *y, int n, int d) {
   // Go over every single feature
   for (int i = 0; i < d; i++) {
     // Go over every threshold in the feature
-    float *attribute_vec = f_getColumn(X, i, n); 
+    float *attribute_vec = f_getColumn(X, feat_indices[i], n); 
     int num_uniques;
     float *unique_ts = f_unique(attribute_vec, n, &num_uniques);
     for (int j = 0; j < num_uniques; j++) {
@@ -59,7 +60,7 @@ Stump *trainDecisionStump(float **X, int *y, int n, int d) {
       if (curr_info_gain > stump->best_info_gain) {
         stump->yes_mode = curr_yes_mode;
         stump->no_mode = curr_no_mode;
-        stump->best_feature = i;
+        stump->best_feature = feat_indices[i];
         stump->best_threshold = t;
         stump->best_info_gain = curr_info_gain;
       }
@@ -69,6 +70,26 @@ Stump *trainDecisionStump(float **X, int *y, int n, int d) {
     free(unique_ts);
   }
 
+  return stump;
+}
+
+Stump *trainDefaultStump(float **X, int *y, int n, int d) {
+  int *feat_indices = malloc(sizeof(int) * d);
+  for (int i = 0; i < d; i++)
+    feat_indices[i] = i;
+  Stump *stump = trainDecisionStump(X, y, n, d, feat_indices);
+  free(feat_indices);
+  return stump;
+}
+
+Stump *trainRandomStump(float **X, int *y, int n, int d) {
+  int avail[d];
+  for (int i = 0; i < d; i++)
+    avail[i] = i;
+  int sqrt_d = sqrt(d);
+  int *feat_indices = i_sample((int *)avail, d, sqrt_d);
+  Stump *stump = trainDecisionStump(X, y, n, sqrt_d, feat_indices);
+  free(feat_indices);
   return stump;
 }
 

@@ -193,3 +193,20 @@ void split(int **yes_pred, int **no_pred, int *size_yes, int *size_no, float *ve
     }
   }
 }
+
+// Samples "n" items from a list "in" of length "len" and returns that array (of length "n")
+int *i_sample(int *in, int len, int n) {
+  int *out = malloc(sizeof(int) * len);
+  memcpy(out, in, sizeof(int) * len);
+  while (len > n) {
+    int to_del = ((double)rand() / RAND_MAX) * len;
+    int *temp = malloc(sizeof(int) * (len - 1));
+    memcpy(temp, out, sizeof(int) * to_del);
+    memcpy(temp + to_del, out + to_del + 1, sizeof(int) * (len - to_del - 1));
+    memcpy(out, temp, sizeof(int) * (len - 1));
+    out = realloc(out, sizeof(int) * (len - 1));
+    free(temp);
+    len--;
+    }
+  return out;
+}

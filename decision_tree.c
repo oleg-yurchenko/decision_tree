@@ -75,7 +75,7 @@ Tree *trainDecisionTree(float **X, int *y, int n, int d, int max_depth, float mi
 }
 
 Tree *trainDefaultTree(float **X, int *y, int n, int d, int max_depth, float min_infogain) {
-  return trainDecisionTree(X, y, n, d, max_depth, min_infogain, trainDecisionStump, predictDecisionStump);
+  return trainDecisionTree(X, y, n, d, max_depth, min_infogain, trainDefaultStump, predictDecisionStump);
 }
 
 RTree *trainRandomTree(float **X, int *y, int n, int d, int max_depth, float min_infogain) {
@@ -92,7 +92,7 @@ RTree *trainRandomTree(float **X, int *y, int n, int d, int max_depth, float min
     r_tree->y_sample[i] = y[sample_idx];
   }
 
-  r_tree->tree = trainDecisionTree(r_tree->X_sample, r_tree->y_sample, n, d, max_depth, min_infogain, trainDecisionStump, predictDecisionStump);
+  r_tree->tree = trainDecisionTree(r_tree->X_sample, r_tree->y_sample, n, d, max_depth, min_infogain, trainRandomStump, predictDecisionStump);
   return r_tree;
 }
 
