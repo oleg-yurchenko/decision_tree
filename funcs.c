@@ -210,3 +210,13 @@ int *i_sample(int *in, int len, int n) {
     }
   return out;
 }
+
+int **i_transpose(int **A, int n, int d) {
+  int **out = malloc(sizeof(int *) * d);
+  for (int i = 0; i < d; i++)
+      out[i] = malloc(sizeof(int) * n);
+  for (int r = 0; r < d; r++) 
+    for (int c = 0; c < n; c++)
+      out[r][c] = A[c][r];
+  return out;
+}

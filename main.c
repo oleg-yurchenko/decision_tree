@@ -1,6 +1,7 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "decision_tree.h"
+#include "random_forest.h"
 #include <time.h>
 
 #define DATA_PATH "./data/danceability_data.csv"
@@ -27,14 +28,15 @@ int main() {
   fclose(data_file);
 
   printf("starting training...\n");
-  // This tree will severely overfit the data, especially since we don't have an actual validation set, and it has infinite depth
-  RTree *tree = trainRandomTree(X, y, N_ROWS, N_COLS, -1, -1);
+  // This forest will severely overfit the data in each individual tree
+  // Ideally I want a validation set to also validate against...
+  Forest *forest = trainRandomForest(X, y, N_ROWS, N_COLS, 100);
   printf("finished training...\n");
 
   // DO SOMETHING WITH TREE
-  printDecisionTree(tree->tree);
+  printRandomForest(forest);
 
-  int *y_pred = predictDecisionTree(tree->tree, X, N_ROWS);
+  int *y_pred = predictRandomForest(forest, X, N_ROWS);
 
   int n_correct = 0;
   for (int i = 0; i < N_ROWS; i++)
@@ -68,14 +70,16 @@ int main() {
   X_test[0][17] = 9.0f;
   X_test[0][18] = 7.0f;
 
-  int *y_test_pred = predictDecisionTree(tree->tree, X_test, 1);
+  //int *y_test_pred = predictDecisionTree(tree->tree, X_test, 1);
+  int *y_test_pred = predictRandomForest(forest, X_test, 1);
   printf("prediction of Blinding Lights: %d\nCorrect answer is: 0\n", y_pred[0]);
   free(X_test[0]);
   free(X_test);
   free(y_test_pred);
   free(y_pred);
 
-  freeRandomTree(tree);
+  //freeRandomTree(tree);
+  freeRandomForest(forest);
 
   for (int i = 0; i < N_ROWS; i++)
     free(X[i]);
